@@ -1,4 +1,4 @@
-require_relative '../lib/TagUpdater'
+require_relative '../lib/tag_updater'
 
 RSpec.describe TagUpdater do
 

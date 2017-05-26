@@ -1,4 +1,4 @@
-require_relative '../lib/RecordExploder'
+require_relative '../lib/record_exploder'
 
 RSpec.describe RecordExploder do
 

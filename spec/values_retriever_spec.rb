@@ -1,4 +1,4 @@
-require_relative '../lib/ValuesRetriever'
+require_relative '../lib/values_retriever'
 
 RSpec.describe ValuesRetriever do
 	

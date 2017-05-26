@@ -1,4 +1,4 @@
-require_relative 'ValuesRetriever'
+require_relative 'values_retriever'
 
 class RecordExploder
 

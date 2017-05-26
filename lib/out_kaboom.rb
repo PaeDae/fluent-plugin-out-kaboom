@@ -1,9 +1,9 @@
 require 'fluent/output'
 require 'json'
-require_relative 'TagUpdater'
-require_relative 'KeysValidator'
-require_relative 'RecordExploder'
-require_relative 'ValuesRetriever'
+require_relative 'tag_updater'
+require_relative 'keys_validator'
+require_relative 'record_exploder'
+require_relative 'values_retriever'
 
 module Fluent
   class Kaboom < Output

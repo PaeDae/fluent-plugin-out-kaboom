@@ -1,4 +1,4 @@
-require_relative '../lib/KeysValidator'
+require_relative '../lib/keys_validator'
 
 RSpec.describe KeysValidator do
 

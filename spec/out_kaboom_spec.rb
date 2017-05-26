@@ -1,6 +1,6 @@
 require 'fluent/test'
 require_relative '../lib/out_kaboom.rb'
-require_relative '../lib/RecordExploder'
+require_relative '../lib/record_exploder'
 
 RSpec.describe Fluent::Kaboom do
 
