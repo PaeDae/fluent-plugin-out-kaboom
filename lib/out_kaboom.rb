@@ -1,8 +1,12 @@
 require 'fluent/output'
 require 'json'
+require_relative 'TagUpdater'
+require_relative 'KeysValidator'
+require_relative 'RecordExploder'
+require_relative 'ValuesRetriever'
 
 module Fluent
-  class SomeOutput < Output
+  class Kaboom < Output
 
     Fluent::Plugin.register_output('kaboom', self)
 
@@ -13,6 +17,10 @@ module Fluent
 
     def configure(conf)
       super
+
+      @record_exploder = RecordExploder.new(ValuesRetriever.new)
+      @tag_updater = TagUpdater.new
+      @keys_validator = KeysValidator.new
 
       key_pattern = "^([^\\\"\\.]+\\.)*[^\\\"\.]+$"
 
@@ -42,42 +50,25 @@ module Fluent
       if (@tag)
         new_tag = @tag
       else
-        if (@remove_tag_prefix && tag.start_with?(@remove_tag_prefix))
-          new_tag = new_tag.sub(@remove_tag_prefix, "")
-        end
-
-        if (@add_tag_prefix)
-          new_tag = "#{@add_tag_prefix}#{new_tag}"
-        end
+        new_tag = @tag_updater.update_tag(tag, @remove_tag_prefix, @add_tag_prefix)
       end
 
-      es.each {|time,record|
+      keys = key.split(".")
 
-        keys = @key.split(".")
+      es.each do |time,record|
 
-        upper_record = record
+        new_records = []
 
-        if (keys.length > 1)
-          keys[0..keys.length - 2].each {|key|
-            if (!upper_record.key?(key))
-              router.emit(new_tag, time, record)
-              return
-            end
-
-            upper_record = upper_record[key]
-          }
+        if (@keys_validator.keys_are_valid?(keys, record) === false)
+          new_records = [record]
+        else
+          new_records = @record_exploder.explode_record(keys, record)
         end
-
-        if (!upper_record.key?(keys.last))
+          
+        new_records.each do |record|
           router.emit(new_tag, time, record)
-          return
         end
-
-        upper_record[keys.last].each {|item|
-          upper_record[keys.last] = item
-          router.emit(new_tag, time, record)
-        }
-      }
+      end
     end
   end
 end
